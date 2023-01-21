@@ -18,18 +18,32 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from lk21 import Bypass
 
 from pyrogram import enums
 
 from userge import userge, Message, pool
 from userge.utils import humanbytes
 
+STREAMTAPE = [
+        "streamtape.",
+        "strtape.cloud",
+        "streamta.pe",
+        "strcloud.link",
+        "strtpe.link",
+        "scloud.online",
+        "stape.fun",
+        "streamtapeadblock.art",
+        "streamadblockplus.com",
+        "shavetape.cash",
+        "streamtape.xyz"
+    ]
 
 @userge.on_cmd("direct", about={
     'header': "Generate a direct download link",
     'supported links': [
         'Google Drive', 'Cloud Mail', 'Yandex.Disk', 'AFH',
-        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive'],
+        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)'],
     'usage': "{tr}direct [link]"})
 async def direct_(message: Message):
     """direct links generator"""
@@ -42,7 +56,7 @@ async def direct_(message: Message):
     if not links:
         await message.err("No links found!")
         return
-    reply = "<b>Direct Links</b> :\n\n"
+    reply = "**Direct Links** :\n\n"
     for link in links:
         if 'drive.google.com' in link:
             reply += f" 👉 {await gdrive(link)}\n"
@@ -64,10 +78,22 @@ async def direct_(message: Message):
             reply += f" 👉 {await androidfilehost(link)}\n"
         elif "1drv.ms" in link:
             reply += f" 👉 {await onedrive(link)}\n"
+        elif any(s for s in STREAMTAPE):
+            reply += f"👉 {await streamtape(link)}\n"
         else:
             reply += f" 👀 {link} is not supported!\n"
     await message.edit(reply, parse_mode=enums.ParseMode.MARKDOWN)
 
+@pool.run_in_thread
+def streamtape(url: str) -> str:
+    url = url.replace(".xyz", ".com")
+    reply = ""
+    try:
+        bypasser = Bypass().bypass_streamtape(url)
+        reply += f"DDL: {bypasser}"
+    except Exception as e:
+        reply += f"ERROR: {e}"
+    return reply
 
 @pool.run_in_thread
 def gdrive(url: str) -> str:
