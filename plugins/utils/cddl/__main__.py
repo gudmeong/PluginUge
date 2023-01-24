@@ -152,7 +152,7 @@ async def cdl_(m: Message):
             
 @pool.run_in_thread
 def fembed(url: str) -> str:
-    scraper = Bypass()
+    scraper = lk21.Bypass()
     result = ""
     try:
         urls = scraper.bypass_fembed(url)
@@ -166,7 +166,7 @@ def fembed(url: str) -> str:
 def stape(url: str) -> str:
     url = url.replace(".xyz", ".com")
     result = ""
-    scraper = Bypass()
+    scraper = lk21.Bypass()
     try:
         bypasser = scraper.bypass_streamtape(url)
         result += f"streamtape:\n{bypasser}"
