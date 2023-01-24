@@ -147,7 +147,7 @@ FEMBED = [
     'header': "Generate a direct download link",
     'supported links': [
         'Google Drive', 'Cloud Mail', 'Yandex.Disk', 'AFH',
-        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)|latest-v1.2'
+        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)|latest-v1.3'
         ],
     'usage': "{tr}direct [link]"})
 async def direct_(message: Message):
@@ -183,10 +183,10 @@ async def direct_(message: Message):
             reply += f" 👉 {await androidfilehost(link)}\n"
         elif "1drv.ms" in link:
             reply += f" 👉 {await onedrive(link)}\n"
+        elif any(fe for fe in FEMBED):
+            reply += f"👉 {await fembeddl(link)}\n"
         elif any(s for s in STREAMTAPE):
             reply += f"👉 {await streamtape(link)}\n"
-        elif any(f for f in FEMBED):
-            reply += f"👉 {await fembeddl(link)}\n"
         else:
             reply += f" 👀 {link} is not supported!\n"
     await message.edit(reply, parse_mode=enums.ParseMode.MARKDOWN)
@@ -197,7 +197,7 @@ def fembeddl(url):
     scraper = Bypass()
     try:
         urls = scraper.bypass_fembed(url)
-        reply += "".join(f"**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
+        reply += "".join(f"fembed:\n**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
         return reply
     except Exception as f:
         reply += f"ERROR.fembed:\n\n{str(f)}"
@@ -210,7 +210,7 @@ def streamtape(url: str) -> str:
     reply = ""
     try:
         bypasser = Bypass().bypass_streamtape(url)
-        reply += str(bypasser)
+        reply += f"streamtape:\n{bypasser}"
         return reply
     except Exception as s:
         reply += f"ERROR.streamtape: {s}"
