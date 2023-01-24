@@ -147,7 +147,7 @@ FEMBED = [
     'header': "Generate a direct download link",
     'supported links': [
         'Google Drive', 'Cloud Mail', 'Yandex.Disk', 'AFH',
-        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)|latest-v1'
+        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)|latest-v1.2'
         ],
     'usage': "{tr}direct [link]"})
 async def direct_(message: Message):
@@ -194,13 +194,14 @@ async def direct_(message: Message):
 @pool.run_in_thread
 def fembeddl(url):
     reply = ""
+    scraper = Bypass()
     try:
-        urls = Bypass().bypass_fembed(url)
+        urls = scraper.bypass_fembed(url)
         reply += "".join(f"**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
-    except Exception:
-        e = traceback.format_exec()
-        reply += f"ERROR.fembed:\n\n{str(e)}"
-    return reply
+        return reply
+    except Exception as f:
+        reply += f"ERROR.fembed:\n\n{str(f)}"
+        return reply
 
 
 @pool.run_in_thread
@@ -209,10 +210,11 @@ def streamtape(url: str) -> str:
     reply = ""
     try:
         bypasser = Bypass().bypass_streamtape(url)
-        reply += bypasser
-    except Exception as e:
-        reply += f"ERROR.streamtape: {e}"
-    return reply
+        reply += str(bypasser)
+        return reply
+    except Exception as s:
+        reply += f"ERROR.streamtape: {s}"
+        return reply
 
 @pool.run_in_thread
 def gdrive(url: str) -> str:
