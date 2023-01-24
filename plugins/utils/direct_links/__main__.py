@@ -11,6 +11,7 @@
 import json
 import re
 import urllib.parse
+import traceback
 from base64 import standard_b64encode
 from os import popen
 from random import choice
@@ -38,12 +39,115 @@ STREAMTAPE = [
         "shavetape.cash",
         "streamtape.xyz"
     ]
+FLIST = [
+    "fembed.net",
+    "fembed.com",
+    "fembad.org",
+    "femax20.com",
+    "fcdn.stream",
+    "feurl.com",
+    "naniplay.nanime.in",
+    "naniplay.nanime.biz",
+    "naniplay.com",
+    "layarkacaxxi.icu",
+    "dutrag.com",
+    "cumpletlyaws.my.id",
+    "mrdhan.com",
+    "mm9842.com",
+    "diasfem.com",
+    "mycloudzz.com",
+    "asianclub.tv",
+    "iframe1videos.xyz",
+    "watchjavnow.xyz",
+    "kotakajair.xyz",
+    "suzihaza.com",
+    "javsubs91.com",
+    "youtnbe.xyz",
+    "nekolink.site",
+    "2tazhfx9vrx4jnvaxt87sknw5eqbd6as.club",
+    "watch-jav-english.live",
+    "streamabc.xyz",
+    "ns21.online",
+    "dbfilm.bar",
+    "panenjamu.xyz",
+    "gdplayer.xyz",
+    "44324242.xyz",
+    "play.dubindo.site",
+    "lk12.my.id",
+    "komikhentai.eu.org",
+    "tpxanime.in",
+    "javlove.club",
+    "pusatporn.live",
+    "anime789.com",
+    "24hd.club",
+    "vcdn.io",
+    "sharinglink.club",
+    "votrefiles.club",
+    "femoload.xyz",
+    "dailyplanet.pw",
+    "jplayer.net",
+    "xstreamcdn.com",
+    "gcloud.live",
+    "vcdnplay.com",
+    "vidohd.com",
+    "vidsource.me",
+    "votrefile.xyz",
+    "zidiplay.com",
+    "mediashore.org",
+    "there.to",
+    "sexhd.co",
+    "viplayer.cc",
+    "votrefilms.xyz",
+    "embedsito.com",
+    "youvideos.ru",
+    "streamm4u.club",
+    "moviepl.xyz",
+    "vidcloud.fun",
+    "fplayer.info",
+    "moviemaniac.org",
+    "albavido.xyz",
+    "ncdnstm.com",
+    "fembed-hd.com",
+    "superplayxyz.club",
+    "cinegrabber.com",
+    "ndrama.xyz",
+    "javstream.top",
+    "javpoll.com",
+    "ezsubz.com",
+    "reeoov.tube",
+    "diampokusy.com",
+    "nazbz.my.id",
+    "gfilm21.xyz",
+    "gudangmovies21asli.xyz",
+    "lajkema.com",
+    "filmvi.xyz",
+    "rapidplay.org",
+    "cloudrls.com",
+    "sf21.cyou",
+    "bebasbiaya.net",
+    "vidsrc.xyz",
+    "streamhoe.online",
+    "i18n.pw",
+    "henkasuru.my.id",
+    "savefilm21info.xyz",
+    "luxubu.review",
+    "vanfem.com",
+    "playerjavseen.com",
+    "vid21.vip",
+    "bbfilm.xyz",
+    "lkc21.net",
+    "subtitleufr.com",
+    "javcl.me",
+    "kitabmarkaz.xyz",
+    "dataku.win"
+    ]
 
 @userge.on_cmd("direct", about={
     'header': "Generate a direct download link",
     'supported links': [
         'Google Drive', 'Cloud Mail', 'Yandex.Disk', 'AFH',
-        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)'],
+        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)',
+        ],
     'usage': "{tr}direct [link]"})
 async def direct_(message: Message):
     """direct links generator"""
@@ -80,9 +184,26 @@ async def direct_(message: Message):
             reply += f" 👉 {await onedrive(link)}\n"
         elif any(s for s in STREAMTAPE):
             reply += f"👉 {await streamtape(link)}\n"
+        elif any(f for f in FLIST):
+            reply += f"👉 {await fembed(link)}\n"
         else:
             reply += f" 👀 {link} is not supported!\n"
     await message.edit(reply, parse_mode=enums.ParseMode.MARKDOWN)
+
+@pool.run_in_thread
+def fembed(url: str) -> str:
+    reply = ""
+    urlf = ""
+    try:
+        urls = Bypass().bypass_fembed(url)
+        for no, item in enumerate(urls, start=1):
+            urlf += f"**{no}.** {item} -> `{urls[item]}`\n\n"
+        reply += f"Fembed bypass:\n\n{urlf}"
+    except Exception:
+        e = traceback.format_exec()
+        reply += f"ERROR:\n\n{str(e)}"
+    return reply
+
 
 @pool.run_in_thread
 def streamtape(url: str) -> str:
