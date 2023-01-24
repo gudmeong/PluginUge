@@ -30,15 +30,14 @@ def stape(url: str) -> str:
         return result
 
 
-"""
 @userge.on_cmd("cdl", about={
     'header': "Custom DirectDownloadLink",
     'supported links': ['streamtape(aliases), fembed(aliases)'],
     'usage': "{tr}sdl [link] {tr}fdl [link]"}
     )
- async def cdl_(m: Message):
-    pass
- """
+async def cdl_(m: Message):
+    return
+ 
     
 @userge.on_cmd("sdl", about={
     'header': "Generate streamtape ddl",
