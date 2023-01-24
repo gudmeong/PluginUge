@@ -39,7 +39,8 @@ STREAMTAPE = [
         "shavetape.cash",
         "streamtape.xyz"
     ]
-FLIST = [
+    
+FEMBED = [
     "fembed.net",
     "fembed.com",
     "fembad.org",
@@ -140,13 +141,13 @@ FLIST = [
     "javcl.me",
     "kitabmarkaz.xyz",
     "dataku.win"
-    ]
+]
 
 @userge.on_cmd("direct", about={
     'header': "Generate a direct download link",
     'supported links': [
         'Google Drive', 'Cloud Mail', 'Yandex.Disk', 'AFH',
-        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)',
+        'MediaFire', 'SourceForge', 'OSDN', 'GitHub', 'Onedrive', 'streamtape(aliases)', 'fembed(aliases)|latest-v1'
         ],
     'usage': "{tr}direct [link]"})
 async def direct_(message: Message):
@@ -184,24 +185,21 @@ async def direct_(message: Message):
             reply += f" 👉 {await onedrive(link)}\n"
         elif any(s for s in STREAMTAPE):
             reply += f"👉 {await streamtape(link)}\n"
-        elif any(f for f in FLIST):
-            reply += f"👉 {await fembed(link)}\n"
+        elif any(f for f in FEMBED):
+            reply += f"👉 {await fembeddl(link)}\n"
         else:
             reply += f" 👀 {link} is not supported!\n"
     await message.edit(reply, parse_mode=enums.ParseMode.MARKDOWN)
 
 @pool.run_in_thread
-def fembed(url: str) -> str:
+def fembeddl(url):
     reply = ""
-    urlf = ""
     try:
         urls = Bypass().bypass_fembed(url)
-        for no, item in enumerate(urls, start=1):
-            urlf += f"**{no}.** {item} -> `{urls[item]}`\n\n"
-        reply += f"Fembed bypass:\n\n{urlf}"
+        reply += "".join(f"**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
     except Exception:
         e = traceback.format_exec()
-        reply += f"ERROR:\n\n{str(e)}"
+        reply += f"ERROR.fembed:\n\n{str(e)}"
     return reply
 
 
@@ -211,9 +209,9 @@ def streamtape(url: str) -> str:
     reply = ""
     try:
         bypasser = Bypass().bypass_streamtape(url)
-        reply += f"DDL: {bypasser}"
+        reply += bypasser
     except Exception as e:
-        reply += f"ERROR: {e}"
+        reply += f"ERROR.streamtape: {e}"
     return reply
 
 @pool.run_in_thread
