@@ -125,5 +125,52 @@ FEMBED = [
           'fembed(aliases', 'streamtape(aliases)'
         ],
     'usage': "{tr}cdl [link]"})
-async def cdl_(message: Message):
-    pass
+async def cdl_(m: Message):
+    """ Custom DirectDownloadLink """
+    text = m.input_or_reply_str
+    if not text:
+        await m.err("input not found!")
+        return
+    await m.edit("`Processing...`")
+    links = re.findall(r'\bhttps?://.*\.\S+', text)
+    if not links:
+        await m.err("No links found!")
+        return
+    result = f"**Custom DirectDownloadLink:**\n\n"
+    for link in links:
+        try:
+            if all(f for f in FEMBED):
+                result += f"Results: {await fembed(link)}\n"
+            elif all(s for s in STREAMTAPE):
+                result += f"Results: {await stape(link)}\n"
+            else:
+                result += f"Results: {link} Not Supported DirectDownloadLink\n"
+        except Exception as e:
+            result += f"ERROR.cdl:\n\n{str(e)}"
+    await m.edit(result, parse_mode=enums.ParseMode.MARKDOWN)
+            
+            
+@pool.run_in_thread
+def fembed(url: str) -> str:
+    scraper = Bypass()
+    result = ""
+    try:
+        urls = scraper.bypass_fembed(url)
+        result += "".join(f"Original link: {url}\nfembed:\n**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
+        return result
+    except Exception as f:
+        result += f"ERROR.fembed:\n\n{str(f)}"
+        return result
+
+@pool.run_in_thread
+def stape(url: str) -> str:
+    url = url.replace(".xyz", ".com")
+    result = ""
+    scraper = Bypass()
+    try:
+        bypasser = scraper.bypass_streamtape(url)
+        result += f"streamtape:\n{bypasser}"
+        return result
+    except Exception as s:
+        result += f"ERROR.streamtape: {s}"
+        return result
