@@ -181,10 +181,10 @@ async def direct_(message: Message):
             reply += f" 👉 {await anonfiles(link)}\n"
         elif 'androidfilehost.com' in link:
             reply += f" 👉 {await androidfilehost(link)}\n"
-        elif "1drv.ms" in link:
-            reply += f" 👉 {await onedrive(link)}\n"
         elif any(fe for fe in FEMBED):
             reply += f"👉 {await fembeddl(link)}\n"
+        elif "1drv.ms" in link:
+            reply += f" 👉 {await onedrive(link)}\n"
         elif any(s for s in STREAMTAPE):
             reply += f"👉 {await streamtape(link)}\n"
         else:
@@ -192,12 +192,12 @@ async def direct_(message: Message):
     await message.edit(reply, parse_mode=enums.ParseMode.MARKDOWN)
 
 @pool.run_in_thread
-def fembeddl(url):
+def fembeddl(url: str) -> str:
     reply = ""
     scraper = Bypass()
     try:
         urls = scraper.bypass_fembed(url)
-        reply += "".join(f"fembed:\n**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
+        reply += "".join(f"Original link: {url}\nfembed:\n**{no}.** {item} -> {urls[item]}\n\n" for no, item in enumerate(list(urls), start=1))
         return reply
     except Exception as f:
         reply += f"ERROR.fembed:\n\n{str(f)}"
