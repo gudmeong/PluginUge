@@ -20,11 +20,11 @@ from userge.utils import progress
 _T_LIMIT = 5242880
 
 
-@userge.on_cmd("telegraph", about={
+@userge.on_cmd("tgh", about={
     'header': "Upload file to Telegra.ph's servers",
     'types': ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.webp', '.html', '.txt', '.py'],
-    'usage': "reply {tr}telegraph to media or text : limit 5MB for media",
-    'examples': "reply {tr}telegraph to `header|content`\n(You can use html code)"})
+    'usage': "reply {tr}tgh to media or text : limit 5MB for media",
+    'examples': "reply {tr}tgh to `header|content`\n(You can use html code)"})
 async def telegraph_(message: Message):
     replied = message.reply_to_message
     if not replied:
@@ -58,7 +58,7 @@ async def telegraph_(message: Message):
                 text = await jv.read()
             header = message.input_str
             if not header:
-                header = "Pasted content by @theuserge"
+                header = f"Pasted content by @{message.from_user.username}"
             await os.remove(dl_loc)
         else:
             content = message.reply_to_message.text.html
@@ -68,8 +68,8 @@ async def telegraph_(message: Message):
                 text = content[1]
             else:
                 text = content
-                header = "Pasted content by @theuserge"
-        t_url = await pool.run_in_thread(post_to_telegraph)(header, text.replace("\n", "<br>"))
+                header = f"Pasted content by @{message.from_user.username}"
+        t_url = await pool.run_in_thread(post_to_telegraph)(header, text.replace("\n", "<br>"), message.from_user.username)
         jv_text = f"**[Here Your Telegra.ph Link!]({t_url})**"
         await message.edit(text=jv_text, disable_web_page_preview=True)
         return
@@ -94,16 +94,18 @@ async def telegraph_(message: Message):
     finally:
         await os.remove(dl_loc)
 
+def username(name):
+    return name.from_user.username
 
-def post_to_telegraph(a_title: str, content: str) -> str:
+def post_to_telegraph(a_title: str, content: str, username: str) -> str:
     """ Create a Telegram Post using HTML Content """
     post_client = TelegraphPoster(use_api=True)
-    auth_name = "@TheUserge"
+    auth_name = f"@{username}"
     post_client.create_api_token(auth_name)
     post_page = post_client.post(
         title=a_title,
         author=auth_name,
-        author_url="https://telegram.me/theUserge",
+        author_url=f"https://telegram.me/{username}",
         text=content
     )
     return post_page['url']
