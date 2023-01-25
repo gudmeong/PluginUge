@@ -84,7 +84,7 @@ async def telegraph_(message: Message):
         img.save(f'{config.Dynamic.DOWN_PATH}/userge.png', 'png')
         await os.remove(dl_loc)
         dl_loc = f'{config.Dynamic.DOWN_PATH}/userge.png'
-    await message.edit("`uploading to telegraph...`")
+    await message.edit("`uploading to telegraph ...`")
     try:
         response = await pool.run_in_thread(upload_file)(dl_loc)
     except Exception as t_e:
