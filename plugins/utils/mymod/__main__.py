@@ -39,17 +39,17 @@ def sys_info():
         mfree = humanbytes(mem.free)
         mused = humanbytes(mem.used)
         text = (
-            f"**User/Bot Statistic:**\n\n"
+            f"**User/Bot Statistic**\n\n"
             f"**Cpu:**\n"
             f"`Total Core   : {core}`\n\n"
-            f"**Disk Currently:**\n"
+            f"**Disk Currently**\n"
             f"`Total/Avail  : {total}`\n"
             f"`Used/Free    : {used} | {free}`\n\n"
-            f"**Memory Currently:**\n"
+            f"**Memory Currently**\n"
             f"`Available    : {mavail}`\n"
             f"`Total        : {mtotal}`\n"
             f"`Used/Free    : {mused} | {mfree}`\n\n"
-            f"**Network Counter:**\n"
+            f"**Network Counter**\n"
             f"`Download     : {dl}`\n"
             f"`Upload       : {ul}`\n"
             f"Use `.stest` for useless"
