@@ -23,11 +23,14 @@ async def generate_sysinfo(workdir):
                  .strftime("%Y-%m-%d %H:%M:%S"))
     }
     # CPU
-    cpu_freq = psutil.cpu_freq().current
-    if cpu_freq >= 1000:
-        cpu_freq = f"{round(cpu_freq / 1000, 2)}GHz"
-    else:
-        cpu_freq = f"{round(cpu_freq, 2)}MHz"
+    try:
+        cpu_freq = psutil.cpu_freq().current
+        if cpu_freq >= 1000:
+            cpu_freq = f"{round(cpu_freq / 1000, 2)}GHz"
+        else:
+            cpu_freq = f"{round(cpu_freq, 2)}MHz"
+    except:
+        cpu_freq = "Not Available"
     info['CPU'] = (
         f"{psutil.cpu_percent(interval=1)}% "
         f"({psutil.cpu_count()}) "
@@ -65,7 +68,7 @@ async def generate_sysinfo(workdir):
             + "```")
 
 
-@userge.on_cmd("sysinfo", about="Get system info of your host machine.")
+@userge.on_cmd("sys", about="Get system info of your host machine.")
 async def get_sysinfo(message: Message):
     await message.edit("Getting system information ...")
     response = await generate_sysinfo(userge.workdir)

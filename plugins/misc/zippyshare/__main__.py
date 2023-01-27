@@ -19,10 +19,10 @@ import requests
 from userge import userge, Message, pool
 
 
-@userge.on_cmd("zippy", about={
+@userge.on_cmd("zs", about={
     'header': "generate Direct link of zippyshare url",
-    'usage': "{tr}zippy : [Zippyshare Link ]",
-    'examples': "{tr}zippy https://www10.zippyshare.com/v/dyh988sh/file.html"})
+    'usage': "{tr}zs : [Zippyshare Link ]",
+    'examples': "{tr}zs https://www10.zippyshare.com/v/dyh988sh/file.html"})
 async def zippyshare(message: Message):
     """ zippy to direct """
     url = message.input_str
@@ -31,7 +31,7 @@ async def zippyshare(message: Message):
         direct_url, fname = await _generate_zippylink(url)
         await message.edit(f"**Original** : {url}\n**FileName** : `{fname}`\n"
                            f"**DirectLink** : {direct_url}\n\n"
-                           "**[HINT]** : use `.download [directLink]`",
+                           "**[HINT]** : use `.dl [directLink]`",
                            disable_web_page_preview=True)
     except Exception as z_e:  # pylint: disable=broad-except
         await message.edit(f"`{z_e}`")
