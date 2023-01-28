@@ -19,9 +19,9 @@ http = httpx.AsyncClient(
 async def get(url: str, *args, **kwargs):
     async with ses.get(url, *args, **kwargs) as res:
         try:
-            data = ses.json()
+            data = res.json()
         except Exception:
-            data = ses.text()
+            data = res.text()
     return data
 
 @userge.on_cmd("gs", about={
