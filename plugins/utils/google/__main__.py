@@ -36,7 +36,7 @@ async def gsearch(message: Message):
         await message.err("Give a query or reply to a message to google!")
         return
     await message.edit(f"**Googling** for `{query}` ...")
-    html = await http.get(f"{REST_API}/google?q={query}", headrs=head)
+    html = await http.get(f"{REST_API}/google?q={query}", headers=head)
     rjson = html.json()
     if not rjson.get('result'):
         await message.edit(f"Not Found for `{query}` Maybe API down")
