@@ -41,7 +41,7 @@ async def gsearch(message: Message):
     if not rjson.get('result'):
         await message.edit(f"Not Found for `{query}` Maybe API down")
         return
-    result = "".join(f"**{no}.** [{item['tite']}]({item['link']})\n{item['snippet']}\n\n" for no, item in enumerate(rjson['result'], start=1))
+    result = "".join(f"**{no}.** [{item['title']}]({item['link']})\n{item['snippet']}\n\n" for no, item in enumerate(rjson['result'], start=1))
     output = f"**Google Search:**\n`{query}`\n\n**Results:**\n{result}"
     await message.edit_or_send_as_file(
         text=output,
