@@ -1,54 +1,52 @@
 """ google search """
 
-# Copyright (C) 2020-2022 by UsergeTeam@Github, < https://github.com/UsergeTeam >.
-#
-# This file is part of < https://github.com/UsergeTeam/Userge > project,
-# and is released under the "GNU v3.0 License Agreement".
-# Please see < https://github.com/UsergeTeam/Userge/blob/master/LICENSE >
-#
+# Copyright (C) 2020-2022 by gudmeong@Github, < https://github.com/gudmeong >.
 # All rights reserved.
 
-from search_engine_parser import GoogleSearch
-
+import aiohttp, httpx, bs4
 from userge import userge, Message
+from . import REST_API
 
-GoogleSearch.parse_soup = lambda __, _: _.find_all("div", class_="Gx5Zad fP1Qef xpd EtOod pkphOe")
+head = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " "Chrome/61.0.3163.100 Safari/537.36"
+}
+ses = aiohttp.ClientSession()
+http = httpx.AsyncClient(
+    http2=True,
+    timeout=httpx.Timeout(20)
+)
 
+async def get(url: str, *args, **kwargs):
+    async with ses.get(url, *args, **kwargs) as res:
+        try:
+            data = ses.json()
+        except Exception:
+            data = ses.text()
+    return data
 
-@userge.on_cmd("google", about={
+@userge.on_cmd("gs", about={
     'header': "do a Google search",
-    'flags': {
-        '-p': "page of results to return (default to 1)",
-        '-l': "limit the number of returned results (defaults to 5)(max 10)"},
-    'usage': "{tr}google [flags] [query | reply to msg]",
-    'examples': "{tr}google -p4 -l10 github-userge"})
+    'usage': "{tr}gs [query | reply to msg]",
+    'examples': "{tr}gs What is Async"})
 async def gsearch(message: Message):
     query = message.filtered_input_str
-    await message.edit(f"**Googling** for `{query}` ...")
-    flags = message.flags
-    page = int(flags.get('-p', 1))
-    limit = int(flags.get('-l', 5))
     if message.reply_to_message:
         query = message.reply_to_message.text
     if not query:
         await message.err("Give a query or reply to a message to google!")
         return
-    try:
-        g_search = GoogleSearch()
-        gresults = await g_search.async_search(query, page)
-    except Exception as e:
-        await message.err(e)
+    await message.edit(f"**Googling** for `{query}` ...")
+    html = await http.get(f"{REST_API}/google?q={query}", headrs=head)
+    rjson = html.json()
+    if not rjson.get('result'):
+        await message.edit(f"Not Found for `{query}` Maybe API down")
         return
-    output = ""
-    for i in range(limit):
-        try:
-            title = gresults["titles"][i].replace("\n", " ")
-            link = gresults["links"][i]
-            desc = gresults["descriptions"][i]
-            output += f"[{title}]({link})\n"
-            output += f"`{desc}`\n\n"
-        except (IndexError, KeyError):
-            break
-    output = f"**Google Search:**\n`{query}`\n\n**Results:**\n{output}"
-    await message.edit_or_send_as_file(text=output, caption=query,
-                                       disable_web_page_preview=True)
+    result = "".join(f"**{no}.** [{item['tite']}]({item['link']})\n{item['snippet']}\n\n" for no, item in enumerate(rjson, start=1))
+    output = f"**Google Search:**\n`{query}`\n\n**Results:**\n{result}"
+    await message.edit_or_send_as_file(
+        text=output,
+        caption=query,
+        disable_web_page_preview=True
+    )
+    await http.close()
+    
