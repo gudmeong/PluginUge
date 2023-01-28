@@ -3,10 +3,10 @@
 # Copyright (C) 2020-2022 by gudmeong@Github, < https://github.com/gudmeong >.
 # All rights reserved.
 
-import aiohttp, httpx, bs4
+import aiohttp, httpx, os
 from userge import userge, Message
-from . import REST_API
 
+REST_API = os.environ.get("REST_API", "")
 head = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " "Chrome/61.0.3163.100 Safari/537.36"
 }
@@ -48,5 +48,4 @@ async def gsearch(message: Message):
         caption=query,
         disable_web_page_preview=True
     )
-    await http.close()
     
