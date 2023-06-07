@@ -75,6 +75,12 @@ async def handle_mentions(msg: Message):
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup([[button]])
         )
+        if not msg.text:
+            await client.copy_message(
+                userge.id if userge.has_bot else config.LOG_CHANNEL_ID,
+                msg.chat.id,
+                msg.id
+            )
     except PeerIdInvalid:
         if userge.dual_mode:
             await userge.send_message(userge.id, "/start")
@@ -84,5 +90,11 @@ async def handle_mentions(msg: Message):
                 disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup([[button]])
             )
+            if not msg.text:
+                await client.copy_message(
+                    userge.id if userge.has_bot else config.LOG_CHANNEL_ID,
+                    msg.chat.id,
+                    msg.id
+                )
         else:
             raise
