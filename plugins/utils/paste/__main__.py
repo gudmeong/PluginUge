@@ -192,7 +192,7 @@ class StashBin(PasteService):
         self._api_url = "https://stashbin.xyz/api/document"
         super().__init__("stashbin", "https://stashbin.xyz/")
     
-    async def paste(self, ses: aiohttp.ClientSession, text: str) -> Optional[str]:
+    async def paste(self, ses: aiohttp.ClientSession, text: str, file_type: Optional[str]) -> Optional[str]:
         async with ses.post(self._api_url, json={"content": text}) as rcode:
           if rcode.status_code != 200:
               return None 
