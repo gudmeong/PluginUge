@@ -187,10 +187,23 @@ class SpaceBin(PasteService):
                 return None
             return await resp.text()
 
+class StashBin(PasteService):
+    def __init__(self) -> None:
+        self._api_url = "https://stashbin.xyz/api/document"
+        super().__init__("stashbin", "https://stashbin.xyz/")
+    
+    async def paste(self, ses: aiohttp.ClientSession, text: str) -> Optional[str]:
+        async with ses.post(self._api_url, json={"content": text}) as rcode:
+          if rcode.status_code != 200:
+              return None 
+          key = (await ses.json())["data"]["key"]
+          return self._url + key
+        
 
 _SERVICES: Dict[str, PasteService] = {
     '-n': NekoBin(), '-h': HasteBin(), '-r': Rentry(), '-p': Pasting(),
-    '-pl': PastyLus(), '-k': KatBin(), '-s': SpaceBin()}
+    '-pl': PastyLus(), '-k': KatBin(), '-s': SpaceBin(), '-st': StashBin()
+}
 
 _DEFAULT_SERVICE = '-k' if config.HEROKU_APP else '-n'
 _HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 ('
@@ -221,11 +234,11 @@ def _get_code(url: str) -> Optional[str]:
     return code.split('.')[0]
 
 
-@userge.on_cmd("paste", about={
+@userge.on_cmd("ps", about={
     'header': "Pastes text or text_file to a bin service",
     'flags': {k: f"use {v.get_name()}" for k, v in _SERVICES.items()},
-    'usage': "{tr}paste [flags] [file_type] [text | reply to msg]",
-    'examples': "{tr}paste -py import os"})
+    'usage': "{tr}ps [flags] [file_type] [text | reply to msg]",
+    'examples': "{tr}ps -py import os"})
 async def paste_(message: Message) -> None:
     """ pastes the text directly to a bin service """
     await message.edit("`Processing...`")
@@ -238,7 +251,8 @@ async def paste_(message: Message) -> None:
             path = await replied.download(config.Dynamic.DOWN_PATH)
             async with aiofiles.open(path, 'r') as d_f:
                 text = await d_f.read()
-            os.remove(path)
+            if await aiofiles.os.path.exists(path):
+                await aiofiles.os.remove(path)
         elif replied.text:
             text = replied.text
     if not text:
