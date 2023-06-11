@@ -187,22 +187,10 @@ class SpaceBin(PasteService):
                 return None
             return await resp.text()
 
-class StashBin(PasteService):
-    def __init__(self) -> None:
-        self._api_url = "https://stashbin.xyz/api/document"
-        super().__init__("stashbin", "https://stashbin.xyz/")
-    
-    async def paste(self, ses: aiohttp.ClientSession, text: str, file_type: Optional[str]) -> Optional[str]:
-        async with ses.post(self._api_url, json={"content": text}) as rcode:
-          if rcode.status != 200:
-              return None 
-          key = await rcode.json()
-          return f"https://stashbin.xyz/{key['data']['key']}"
-        
 
 _SERVICES: Dict[str, PasteService] = {
     '-n': NekoBin(), '-h': HasteBin(), '-r': Rentry(), '-p': Pasting(),
-    '-pl': PastyLus(), '-k': KatBin(), '-s': SpaceBin(), '-st': StashBin()
+    '-pl': PastyLus(), '-k': KatBin(), '-s': SpaceBin()
 }
 
 _DEFAULT_SERVICE = '-k' if config.HEROKU_APP else '-n'
