@@ -196,7 +196,7 @@ class StashBin(PasteService):
         async with ses.post(self._api_url, json={"content": text}) as rcode:
           if rcode.status_code != 200:
               return None 
-          key = (await ses.json())["data"]["key"]
+          key = (await rcode.json())["data"]["key"]
           return self._url + key
         
 
