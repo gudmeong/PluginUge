@@ -194,7 +194,7 @@ class StashBin(PasteService):
     
     async def paste(self, ses: aiohttp.ClientSession, text: str, file_type: Optional[str]) -> Optional[str]:
         async with ses.post(self._api_url, json={"content": text}) as rcode:
-          if rcode.status_code != 200:
+          if rcode.status != 200:
               return None 
           key = (await rcode.json())["data"]["key"]
           return self._url + key
