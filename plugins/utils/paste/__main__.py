@@ -189,10 +189,11 @@ class SpaceBin(PasteService):
 
 class StashBin(PasteService):
     def __init__(self) -> None:
+        self._api_url = "https://stashbin.xyz/api/document"
         super().__init__("stashbin", "https://stashbin.xyz/")
     
     async def paste(self, ses: aiohttp.ClientSession, text: str, file_type: Optional[str]) -> Optional[str]:
-        async with ses.post(self._url + "api/document/", json={"content": text}) as rcode:
+        async with ses.post(self._api_url, json={"content": text}) as rcode:
           if rcode.status != 200:
               return None 
           key = await rcode.json()
