@@ -196,7 +196,7 @@ class StashBin(PasteService):
           if rcode.status != 200:
               return None 
           key = await rcode.json()
-          return _get_url(self._url + key['data']['key'], file_type)
+          return f"https://stashbin.xyz/{key['data']['key']}"
         
 
 _SERVICES: Dict[str, PasteService] = {
