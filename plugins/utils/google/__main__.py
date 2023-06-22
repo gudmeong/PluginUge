@@ -24,6 +24,15 @@ async def get(url: str, *args, **kwargs):
             data = res.text()
     return data
 
+def split_attr(arr, size: int):
+    arrs = []
+    while len(arr) > size:
+        pice = arr[:size]
+        arrs.append(pice)
+        arr = arr[size:]
+    arrs.append(arr)
+    return arrs
+
 @userge.on_cmd("gs", about={
     'header': "do a Google search",
     'usage': "{tr}gs [query | reply to msg]",
@@ -41,7 +50,7 @@ async def gsearch(message: Message):
     if not rjson.get('result'):
         await message.edit(f"Not Found for `{query}` Maybe API down")
         return
-    result = "".join(f"**{no}.** [{item['title']}]({item['link']})\n{item['snippet']}\n\n" for no, item in enumerate(rjson['result'], start=1))
+    result = "".join(f"**{no}.** [{item['title']}]({item['link']})\n{item['snippet']}\n\n" for no, item in enumerate(split_attr(rjson.get('result'), 10), start=1))
     output = f"**Google Search:**\n`{query}`\n\n**Results:**\n{result}"
     await message.edit_or_send_as_file(
         text=output,
