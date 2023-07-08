@@ -51,10 +51,10 @@ async def sangmata_(message: Message):
                 await message.edit("```\nUser never changed his Username...```", del_in=5)
                 return
             username = msg.text.split("Usernames")[1]
-            await message.edit(f"`{username}`")
+            await message.edit(username)
         else:
             if msg.text.startswith("No data available"):
                 await message.edit("```\nUser never changed his Name...```", del_in=5)
                 return
             name = msg.text.split("Names")[1].split("Usernames")[0]
-            await message.edit(f"`{name}`")
+            await message.edit(name)
