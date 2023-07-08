@@ -56,5 +56,5 @@ async def sangmata_(message: Message):
             if msg.text.startswith("No data available"):
                 await message.edit("```\nUser never changed his Name...```", del_in=5)
                 return
-            name = msg.text.split("Names")[1].split("Usernames"[0]
+            name = msg.text.split("Names")[1].split("Usernames")[0]
             await message.edit(f"`{name}`")
