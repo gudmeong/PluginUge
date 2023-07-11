@@ -76,12 +76,12 @@ async def ss_gen(message: Message):
     try:
         for frames in random.sample(range(vid_len), int(ss_c)):
             rword = ranword(7)
-            capture = await take_screen_shot(vid_loc, int(frames), f"{rword}.jpeg")
-            PHOTO.append(InputMediaPhoto(f"{rword}.jpeg"))
-            await message.reply_media_group(media=PHOTO, reply_to_message_id=message.id)
-            os.remove(capture)
-            PHOTO.clear()
+            capture = await take_screen_shot(vid_loc, int(frames), "ss_cap.jpeg")
+            PHOTO.append(InputMediaPhoto("ss_cap.jpeg"))
+        await message.reply_media_group(media=PHOTO, reply_to_message_id=message.id)
+        os.remove(capture)
         await message.edit("Uploaded")
+        PHOTO.clear()
     except Exception as e:
         await message.edit(e)
     if should_clean:
