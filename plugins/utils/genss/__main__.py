@@ -82,7 +82,9 @@ async def ss_gen(message: Message):
         os.remove(capture)
         await asyncio.sleep(1)
         await message.delete()
-        await message.client.send_message(text="Uploaded", message_id=a.id, chat_id=message.chat.id)
+        for i in a:
+            ids = i.id
+        await message.client.send_message(text="Uploaded", message_id=ids, chat_id=message.chat.id)
     except Exception as e:
         await message.edit(e)
     if should_clean:
