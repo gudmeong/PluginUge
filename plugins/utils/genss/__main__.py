@@ -11,13 +11,19 @@
 
 import os
 import random
-import asyncio
+import asyncio, string
 
 from hachoir.metadata import extractMetadata as XMan
-from hachoir.parser import createParser as CPR
+from hachoir.parser import createParser as CPR 
+from pyrogram.types import InputMediaPhoto
 
 from userge import userge, Message, config
 from userge.utils import take_screen_shot, progress
+
+def ranword(length: int = 5):  # noqa: E252
+    text_str = "".join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+    return text_str.upper()
+    
 
 
 @userge.on_cmd("genss", about={
@@ -66,15 +72,17 @@ async def ss_gen(message: Message):
         await message.edit("Something went wrong, Not able to gather metadata")
         return
     await message.edit("Done, Generating Screen Shots and uploading")
+    PHOTO = []
     try:
         for frames in random.sample(range(vid_len), int(ss_c)):
-            capture = await take_screen_shot(vid_loc, int(frames), "ss_cap.jpeg")
-            await message.client.send_photo(chat_id=message.chat.id, photo=capture)
+            rword = ranword(7)
+            capture = await take_screen_shot(vid_loc, int(frames), f"{rword}.jpeg")
+            PHOTO.append(InputMediaPhoto(f"{rword}.jpeg"))
+            await message.reply_media_group(media=PHOTO, reply_to_message_id=message.id)
             os.remove(capture)
+            PHOTO.clear()
         await message.edit("Uploaded")
     except Exception as e:
         await message.edit(e)
     if should_clean:
         os.remove(vid_loc)
-    await asyncio.sleep(0.5)
-    await message.delete()
