@@ -45,7 +45,7 @@ async def copied(msg: Message):
     if gmsg.chat.has_protected_content:
         if gmsg.photo:
             photo = await gmsg.download()
-            await msg.reply_photo(photo=photo, caption=gmsg.caption)
+            await msg.reply_photo(photo=photo, caption=gmsg.caption, quote=1)
             await aiofiles.os.remove(photo)
         else:
             await msg.reply_text(gmsg.text)
