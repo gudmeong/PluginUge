@@ -42,13 +42,16 @@ async def copied(msg: Message):
     if cid.isdigit():
         cid = f"-100{cid}"
     gmsg = await msg.client.get_messages(str(cid), int(mid))
-    if gmsg.chat.has_protected_content and gmsg.photo:
-        photo = await gmsg.download()
-        await msg.reply_photo(photo=photo, caption=gmsg.caption)
-        await aiofiles.os.remove(photo)
+    if gmsg.chat.has_protected_content:
+        if gmsg.photo:
+            photo = await gmsg.download()
+            await msg.reply_photo(photo=photo, caption=gmsg.caption)
+            await aiofiles.os.remove(photo)
+        else:
+            await msg.reply_text(gmsg.text)
         await msg.edit("Successfully.")
     else:
-        await msg.reply_photo(photo=gmsg.photo.file_id, caption=gmsg.caption)
+        await msg.reply_text(gmsg.text)
         await msg.edit("Successfully.")
 
 @pool.run_in_thread
