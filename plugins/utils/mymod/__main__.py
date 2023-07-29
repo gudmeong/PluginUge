@@ -32,6 +32,8 @@ async def bstat(m: Message):
 async def copied(msg: Message):
     link = msg.input_str
     await msg.edit("Processing...")
+    if not link:
+        return await msg.edit("Input LINK BLOG")
     res = link.split("/")
     try:
         cid, mid = res[4], res[5]
