@@ -1,4 +1,4 @@
-import shutil, psutil, asyncio
+import shutil, psutil, asyncio, aiofiles
 
 from userge import userge, Message, pool
 from pyrogram import enums
@@ -7,7 +7,7 @@ from userge.utils import humanbytes
 @userge.on_cmd("mod", about={
     'header': "Other self mods haha v0.5",
     'description': "Unofficial modules for Userge",
-    'usage': "{tr}st"}
+    'usage': "{tr}st {tr}copy [link]"}
 )
 async def checkmsg(m: Message):
     msg = await m.edit("`Processing ...`", parse_mode=enums.ParseMode.MARKDOWN)
@@ -24,6 +24,30 @@ async def bstat(m: Message):
     proc = await sys_info()
     await msg.edit(proc)
 
+@userge.on_cmd("copy", about={
+    'header': 'Copy message...',
+    'usage': '{tr}copy [link]'
+    }
+)
+async def copied(msg: Message):
+    link = msg.input_str
+    await msg.edit("Processing...")
+    res = link.split("/")
+    try:
+        cid, mid = res[4], res[5]
+    except:
+        cid, mid = res[3], res[4]
+    if cid.isdigit():
+        cid = f"-100{cid}"
+    gmsg = await message.client.get_messages(str(cid), int(mid))
+    if gmsg.chat.has_protected_content and gmsg.photo:
+        photo = await gmsg.download()
+        await msg.reply_photo(photo=photo, caption=gmsg.caption)
+        await aiofiles.os.remove(photo)
+        await msg.edit("Successfully.")
+    else:
+        await msg.reply_photo(photo=gmsg.photo.file_id, caption=gmsg.caption)
+        await msg.edit("Successfully.")
 
 @pool.run_in_thread
 def sys_info():
