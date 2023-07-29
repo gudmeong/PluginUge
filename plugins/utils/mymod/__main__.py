@@ -7,7 +7,7 @@ from userge.utils import humanbytes
 @userge.on_cmd("mod", about={
     'header': "Other self mods haha v0.5",
     'description': "Unofficial modules for Userge",
-    'usage': "{tr}st {tr}copy [link]"}
+    'usage': "{tr}st\n{tr}copy [link]"}
 )
 async def checkmsg(m: Message):
     msg = await m.edit("`Processing ...`", parse_mode=enums.ParseMode.MARKDOWN)
@@ -39,7 +39,7 @@ async def copied(msg: Message):
         cid, mid = res[3], res[4]
     if cid.isdigit():
         cid = f"-100{cid}"
-    gmsg = await message.client.get_messages(str(cid), int(mid))
+    gmsg = await msg.client.get_messages(str(cid), int(mid))
     if gmsg.chat.has_protected_content and gmsg.photo:
         photo = await gmsg.download()
         await msg.reply_photo(photo=photo, caption=gmsg.caption)
