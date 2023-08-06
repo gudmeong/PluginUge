@@ -116,7 +116,7 @@ async def _send_alive(message: Message,
         await _refresh_id(message)
     
     should_mark = None if _IS_STICKER else reply_markup
-    if message.chat.is_topic:
+    if message.chat.is_forum:
         thread_id = message.message_thread_id
     if _IS_TELEGRAPH:
         await _send_telegraph(message, text, reply_markup, thread_id)
