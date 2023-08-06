@@ -87,10 +87,10 @@ async def creator(m: Message):
     )
     if len(msg.encode()) > 4096:
         async with aiofiles.open("domain.txt", "w") as f:
-            file = await f.read(msg)
-            await f.close()
+            await f.read(msg)
+        await f.close()
     await m.edit_or_send_as_file(
-        "msg", as_raw=file, filename="domain.txt", caption="Domain too large"
+        "msg", filename="domain.txt", caption="Domain too large"
     )
     if await aiofiles.os.path.isfile("domain.txt"):
         await aiofiles.os.remove("domain.txt")
