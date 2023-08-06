@@ -13,7 +13,7 @@ from pyrogram.errors import UserNotParticipant, ChannelPrivate
 from pyrogram import enums
 
 from userge import userge, Message
-
+import aiofiles
 
 @userge.on_cmd(
     "domain",
@@ -78,12 +78,22 @@ async def creator(m: Message):
             except (UserNotParticipant, ChannelPrivate):
                 continue
 
-    await m.edit(
+    file = None
+    msg = (
         f"<u>**GROUPS**</u> __({status})__:\n"
         + ("(__None__)" if not g_str else g_str)
         + f"\n<u>**CHANNELS**</u> __({status})__:\n"
         + ("(__None__)" if not c_str else c_str)
     )
+    if len(msg.encode()) > 4096:
+        async with aiofiles.os.open("domain.txt", "w") as f:
+            file = await f.read(msg)
+            await f.close()
+    await m.edit_or_send_as_file(
+        msg, as_raw=file, filename="domain.txt", caption="Domain too large"
+    )
+    if await aiofiles.os.path.isfile("domain.txt"):
+        await aiofiles.os.remove("domain.txt")
 
 
 @userge.on_cmd("stats",
