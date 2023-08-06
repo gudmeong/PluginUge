@@ -86,7 +86,7 @@ async def creator(m: Message):
         + ("(__None__)" if not c_str else c_str)
     )
     if len(msg.encode()) > 4096:
-        async with aiofiles.os.open("domain.txt", "w") as f:
+        async with aiofiles.open("domain.txt", "w") as f:
             file = await f.read(msg)
             await f.close()
     await m.edit_or_send_as_file(
