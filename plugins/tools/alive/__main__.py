@@ -34,7 +34,7 @@ _IS_TELEGRAPH = False
 _IS_STICKER = False
 
 _DEFAULT = "https://t.me/UserGeSpam/457297"
-_CHAT, _MSG_ID = None, None
+_CHAT, _MSG_ID, thread_id = None, None, None
 _LOGO_ID = None
 
 
@@ -111,17 +111,23 @@ async def _send_alive(message: Message,
                       text: str,
                       reply_markup: Optional[InlineKeyboardMarkup],
                       recurs_count: int = 0) -> None:
+    global thread_id
     if not _LOGO_ID:
         await _refresh_id(message)
+    
     should_mark = None if _IS_STICKER else reply_markup
+    if message.chat.is_topic:
+        thread_id = message.message_thread_id
     if _IS_TELEGRAPH:
-        await _send_telegraph(message, text, reply_markup)
+        await _send_telegraph(message, text, reply_markup, thread_id)
     else:
         try:
             await message.client.send_cached_media(chat_id=message.chat.id,
                                                    file_id=_LOGO_ID,
                                                    caption=text,
-                                                   reply_markup=should_mark)
+                                                   reply_markup=should_mark,
+                                                   message_thread_id=thread_id
+                                                   )
             if _IS_STICKER:
                 raise ChatSendMediaForbidden
         except SlowmodeWait as s_m:
@@ -137,7 +143,9 @@ async def _send_alive(message: Message,
             await message.client.send_message(chat_id=message.chat.id,
                                               text=text,
                                               disable_web_page_preview=True,
-                                              reply_markup=should_mark)
+                                              reply_markup=should_mark,
+                                              message_thread_id=thread_id
+                                              )
 
 
 async def _refresh_id(message: Message) -> None:
@@ -184,7 +192,7 @@ def _set_data(errored: bool = False) -> None:
         _MSG_ID = int(match.group(7))
 
 
-async def _send_telegraph(msg: Message, text: str, reply_markup: Optional[InlineKeyboardMarkup]):
+async def _send_telegraph(msg: Message, text: str, reply_markup: Optional[InlineKeyboardMarkup], message_thread_id: Optional[int]):
     path = os.path.join(config.Dynamic.DOWN_PATH, os.path.split(alive.ALIVE_MEDIA)[1])
     if not os.path.exists(path):
         await pool.run_in_thread(wget.download)(alive.ALIVE_MEDIA, path)
@@ -193,19 +201,22 @@ async def _send_telegraph(msg: Message, text: str, reply_markup: Optional[Inline
             chat_id=msg.chat.id,
             photo=path,
             caption=text,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            message_thread_id=message_thread_id,
         )
     elif path.lower().endswith((".mkv", ".mp4", ".webm")):
         await msg.client.send_video(
             chat_id=msg.chat.id,
             video=path,
             caption=text,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            message_thread_id=message_thread_id
         )
     else:
         await msg.client.send_document(
             chat_id=msg.chat.id,
             document=path,
             caption=text,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            message_thread_id=message_thread_id
         )
