@@ -41,7 +41,7 @@ async def copied(msg: Message):
         cid, mid = res[3], res[4]
     if cid.isdigit():
         cid = f"-100{cid}"
-    gmsg = await msg.client.get_messages(str(cid), int(mid))
+    gmsg = await userge.get_messages(str(cid), int(mid))
     if gmsg.chat.has_protected_content:
         if gmsg.photo:
             photo = await gmsg.download()
