@@ -90,7 +90,7 @@ async def creator(m: Message):
             await f.write(msg)
         await f.close()
     await m.edit_or_send_as_file(
-        "msg", filename="domain.txt", caption="Domain too large"
+        msg, filename="domain.txt", caption="Domain too large"
     )
     if await aiofiles.os.path.isfile("domain.txt"):
         await aiofiles.os.remove("domain.txt")
