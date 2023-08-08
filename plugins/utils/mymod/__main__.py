@@ -51,6 +51,7 @@ async def copied(msg: Message):
             await msg.reply_photo(photo=photo, caption=gmsg.caption, quote=1)
             await aiofiles.os.remove(photo)
         else:
+            #file = await gmsg.download()
             if gmsg.video:
                 await msg.reply_video(video=gmsg.video.file_id, caption=gmsg.caption or "", quote=1)
             elif gmsg.document:
@@ -63,6 +64,8 @@ async def copied(msg: Message):
             await msg.reply_video(video=gmsg.video.file_id, caption=gmsg.caption or "", quote=1)
         elif gmsg.document:
             await msg.reply_document(document=gmsg.document.file_id, caption=gmsg.caption or "", quote=1)
+        elif gmsg.photo:
+            await msg.reply_photo(photo=gmsg.photo.file_id, caption=gmsg.caption or "", quote=1)
         else:
             await msg.reply_text(gmsg.text if gmsg.text else gmsg.caption or "None")
         await msg.edit("Successfully.")
