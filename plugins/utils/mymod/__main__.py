@@ -30,8 +30,10 @@ async def bstat(m: Message):
     }
 )
 async def copied(msg: Message):
-    link = msg.input_str
+    link = msg.input_str if msg.input_str else msg.reply_to_message.text
     await msg.edit("Processing...")
+    if not link.startswith("https://t.me"):
+        return await msg.edit("Wrong input")
     if not link:
         return await msg.edit("Input LINK BLOG")
     res = link.split("/")
