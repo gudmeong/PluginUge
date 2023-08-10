@@ -4,6 +4,8 @@ from userge import userge, Message, pool
 from pyrogram import enums
 from userge.utils import humanbytes
 
+LOG = userge.getLogger(__name__)
+
 @userge.on_cmd("mod", about={
     'header': "Other self mods haha v0.5",
     'description': "Unofficial modules for Userge",
@@ -43,7 +45,11 @@ async def copied(msg: Message):
         cid, mid = res[3], res[4]
     if cid.isdigit():
         cid = f"-100{cid}"
-    await msg.client.get_chat(cid)
+    try:
+        a = await msg.client.get_chat(int(cid))
+        LOG.info(a)
+    except Exception as e:
+        LOG.error(e)
     gmsg = await msg.client.get_messages(str(cid), int(mid))
     if gmsg.chat.has_protected_content:
         if gmsg.photo:
