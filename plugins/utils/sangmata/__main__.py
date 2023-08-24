@@ -25,15 +25,15 @@ from userge.utils.exceptions import StopConversation
 async def sangmata_(message: Message):
     """ Get User's Updated previous Names and Usernames """
     replied = message.reply_to_message
-    if not replied:
-        await message.err("```\nReply to get Name and Username History...```", del_in=5)
-        return
     user = replied.from_user.id
     if not replied:
         user = message.input_str
     if user.startswith("@"):
         user = (await message.client.get_users(user.split("@")[1])).id
     chat = "@SangMata_beta_bot"
+    if not user:
+        await message.err("```\nReply or input id or username to get Name and Username History...```", del_in=5)
+        return
     await message.edit("```\nGetting info, Wait plox ...```")
     msgs = []
     ERROR_MSG = "For your kind information, you blocked {chat}, Unblock it".format(chat=chat)
