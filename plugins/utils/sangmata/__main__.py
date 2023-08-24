@@ -24,7 +24,7 @@ from userge.utils.exceptions import StopConversation
              "{tr}sg -u [Reply to user]"}, allow_via_bot=False)
 async def sangmata_(message: Message):
     """ Get User's Updated previous Names and Usernames """
-    if replied:
+    if (replied := message.reply_to_message):
         user = replied.from_user.id
     else:
         user = message.input_str
