@@ -29,6 +29,10 @@ async def sangmata_(message: Message):
         await message.err("```\nReply to get Name and Username History...```", del_in=5)
         return
     user = replied.from_user.id
+    if not replied:
+        user = message.input_str
+    if user.startswith("@"):
+        user = (await message.client.get_users(user.split("@")[1])).id
     chat = "@SangMata_beta_bot"
     await message.edit("```\nGetting info, Wait plox ...```")
     msgs = []
