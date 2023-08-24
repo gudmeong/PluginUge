@@ -14,7 +14,7 @@ from pyrogram.errors.exceptions.bad_request_400 import YouBlockedUser
 
 from userge import userge, Message
 from userge.utils.exceptions import StopConversation
-
+import asyncio
 
 @userge.on_cmd("sg", about={
     'header': "Sangmata gives you user's last updated names and usernames.",
@@ -43,8 +43,9 @@ async def sangmata_(message: Message):
             try:
                 await conv.send_message(f"{user}")
             except YouBlockedUser:
-                await message.err(f"{ERROR_MSG}", del_in=5)
-                return
+                await userge.unblock_user(chat)
+                asyncio.sleep(1)
+                await conv.send_message(f"{user}")
             msgs.append(await conv.get_response(mark_read=True))
             msgs.append(await conv.get_response(mark_read=True))
             msgs.append(await conv.get_response(timeout=3, mark_read=True))
