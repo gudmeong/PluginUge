@@ -44,7 +44,7 @@ async def sangmata_(message: Message):
                 await conv.send_message(f"{user}")
             except YouBlockedUser:
                 await userge.unblock_user(chat)
-                asyncio.sleep(1)
+                await asyncio.sleep(1)
                 await conv.send_message(f"{user}")
             msgs.append(await conv.get_response(mark_read=True))
             msgs.append(await conv.get_response(mark_read=True))
