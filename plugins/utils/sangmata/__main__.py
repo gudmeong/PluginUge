@@ -32,7 +32,7 @@ async def sangmata_(message: Message):
     if not user:
         await message.err("```\nReply or input id or username to get Name and Username History...```", del_in=5)
         return
-    if user.startswith("@"):
+    if not isinstance(user, int) and user.startswith("@"):
         user = (await message.client.get_users(user.split("@")[1])).id
     chat = "@SangMata_beta_bot"
     await message.edit("```\nGetting info, Wait plox ...```")
