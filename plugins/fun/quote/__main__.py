@@ -20,7 +20,8 @@ from userge import userge, Message
     'usage': "{tr}quote [text or reply to msg]"}, allow_via_bot=False)
 async def quotecmd(message: Message):
     """quotecmd"""
-    asyncio.get_event_loop().create_task(message.delete())
+    #asyncio.get_event_loop().create_task(message.delete())
+    await message.edit("`Processing quotes...`")
     args = message.input_str
     replied = message.reply_to_message
     async with userge.conversation('QuotLyBot') as conv:
@@ -35,10 +36,11 @@ async def quotecmd(message: Message):
         except YouBlockedUser:
             await message.edit('first **unblock** @QuotLyBot')
             return
-        quote = await conv.get_response(mark_read=True)
+        quote = await conv.get_response(timeout=15, mark_read=True)
         if not quote.sticker:
             await message.edit('something went wrong!, see here: @QuotlyBot')
         else:
+            await message.delete()
             message_id = replied.id if replied else None
             await userge.send_sticker(chat_id=message.chat.id,
                                       sticker=quote.sticker.file_id,
