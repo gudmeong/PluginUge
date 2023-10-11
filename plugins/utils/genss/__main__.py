@@ -76,10 +76,11 @@ async def ss_gen(message: Message):
     try:
         for frames in random.sample(range(vid_len), int(ss_c)):
             rword = ranword(7)
-            capture = await take_screen_shot(vid_loc, int(frames), f"{rword}.jpeg")
-            PHOTO.append(InputMediaPhoto(f"{rword}.jpeg"))
+            capture = await take_screen_shot(vid_loc, int(frames), f"ss_x.jpeg")
+            PHOTO.append(InputMediaPhoto(f"ss_x.jpeg"))
         a = await message.reply_media_group(media=PHOTO, reply_to_message_id=message.reply_to_message.id)
-        os.remove(capture)
+        for _ in range(len(PHOTO)):
+            os.remove(capture)
         await asyncio.sleep(1)
         await message.delete()
         for i in a:
